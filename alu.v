@@ -9,12 +9,22 @@ module alu (
     output reg         zero
 );
 
+    reg [4:0] result_ext;
+
     always @(*) begin
         carry_out = 1'b0;
         overflow  = 1'b0;
+        result_ext = 5'b0;
 
         if (enable) begin
             case (opcode)
+                3'b000: begin
+                    result_ext = {1'b0, a} + {1'b0, b};
+                    y          = result_ext[3:0];
+                    carry_out  = result_ext[4];
+                    overflow   = (a[3] == b[3]) && (y[3] != a[3]);
+                end
+
                 3'b010: y = a & b;
                 3'b011: y = a | b;
                 3'b100: y = a ^ b;
