@@ -28,6 +28,13 @@ module alu_tb();
             #10;
         end
 
+        enable = 1;
+        a = 4'b0101; b = 4'b0011;
+        for (i = 0; i < 8; i = i + 1) begin
+            opcode = i;
+            #10;
+        end
+
         $finish;
     end
 
