@@ -38,6 +38,8 @@ module alu_tb();
         opcode = 3'b000; a = 4'b1111; b = 4'b0001; #10;
         opcode = 3'b000; a = 4'b0111; b = 4'b0001; #10;
         opcode = 3'b001; a = 4'b1000; b = 4'b0001; #10;
+        opcode = 3'b100; a = 4'b1010; b = 4'b1010; #10;
+        opcode = 3'b001; a = 4'b0101; b = 4'b0011; #10;
 
         $finish;
     end
