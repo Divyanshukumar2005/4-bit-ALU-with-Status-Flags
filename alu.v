@@ -25,6 +25,13 @@ module alu (
                     overflow   = (a[3] == b[3]) && (y[3] != a[3]);
                 end
 
+                3'b001: begin
+                    result_ext = {1'b0, a} + {1'b0, (~b + 1'b1)};
+                    y          = result_ext[3:0];
+                    carry_out  = result_ext[4];
+                    overflow   = (a[3] != b[3]) && (y[3] != a[3]);
+                end
+
                 3'b010: y = a & b;
                 3'b011: y = a | b;
                 3'b100: y = a ^ b;
