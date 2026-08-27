@@ -57,3 +57,7 @@ This prints a time-stamped trace of every signal to the console and writes `alu.
 │   └── yosys_synthesis_schematic.png
 └── README.md
 ```
+
+## 📄 License
+
+MIT — see [LICENSE](LICENSE).
