@@ -45,3 +45,15 @@ vvp alu_sim
 ```
 
 This prints a time-stamped trace of every signal to the console and writes `alu.vcd`, which can be opened in GTKWave (or EPWave on [EDA Playground](https://www.edaplayground.com/)) to inspect the waveform.
+
+## 📁 Repository Structure
+
+```
+.
+├── alu.v                              # ALU design
+├── alu_tb.v                           # Testbench
+├── images/
+│   ├── simulation_waveform.png
+│   └── yosys_synthesis_schematic.png
+└── README.md
+```
