@@ -34,3 +34,14 @@ The design was verified in two stages:
 2. **Synthesis** (Yosys) — the design was synthesized to a gate-level netlist to confirm it is fully synthesizable RTL, not just simulatable behavioral code.
 
    ![Yosys synthesis schematic](images/yosys_synthesis_schematic.png)
+
+## 🛠️ Running It Yourself
+
+Requires [Icarus Verilog](http://iverilog.icarus.com/):
+
+```bash
+iverilog -o alu_sim alu.v alu_tb.v
+vvp alu_sim
+```
+
+This prints a time-stamped trace of every signal to the console and writes `alu.vcd`, which can be opened in GTKWave (or EPWave on [EDA Playground](https://www.edaplayground.com/)) to inspect the waveform.
