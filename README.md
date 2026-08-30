@@ -1,13 +1,19 @@
-# 4-bit ALU with Status Flags (Verilog)
+# 4-bit ALU with Status Flags
 
-A 4-bit Arithmetic Logic Unit supporting 8 operations, with **Carry-out**, **Overflow**, and **Zero** status flags — the same kind of flag outputs found on real processor datapaths. Verified via simulation and synthesized to a gate-level netlist with Yosys.
+A 4-bit Arithmetic Logic Unit implemented in Verilog, supporting eight arithmetic and logic operations along with carry-out, overflow, and zero status flags. The flag logic follows the same conventions used in processor datapaths, and the design has been verified through both simulation and gate-level synthesis.
 
-## 📋 Supported Operations
+## Overview
 
-| Opcode | Operation | Description |
+The ALU takes two 4-bit operands (`a`, `b`), a 3-bit opcode, and an enable input, and produces a 4-bit result `y` along with three status flags. The flags are derived directly from the arithmetic path rather than bolted on separately -- `carry_out` comes from the extended-width result of the add/subtract operation, and `overflow` is computed using the standard two's-complement sign-comparison rule (both operands share a sign, but the result's sign doesn't match).
+
+When `enable` is low, `y` is forced to `0000` and the arithmetic flags default to `0`.
+
+## Supported Operations
+
+| Opcode | Operation | Notes |
 |---|---|---|
-| `000` | `y = a + b` | Addition — sets `carry_out` and `overflow` |
-| `001` | `y = a - b` | Subtraction (2's complement) — sets `carry_out` and `overflow` |
+| `000` | `y = a + b` | Sets `carry_out` and `overflow` |
+| `001` | `y = a - b` | Two's-complement subtraction; sets `carry_out` and `overflow` |
 | `010` | `y = a & b` | Bitwise AND |
 | `011` | `y = a \| b` | Bitwise OR |
 | `100` | `y = a ^ b` | Bitwise XOR |
@@ -15,49 +21,66 @@ A 4-bit Arithmetic Logic Unit supporting 8 operations, with **Carry-out**, **Ove
 | `110` | `y = a << 1` | Logical left shift |
 | `111` | `y = a >> 1` | Logical right shift |
 
-When `enable = 0`, the output is forced to `0000` regardless of opcode.
+`zero` is set independently of the opcode, whenever `y` evaluates to `0000`.
 
-## 🚩 Status Flags
+## Verification
 
-- **`carry_out`** — set on unsigned overflow for addition (bit beyond MSB), or acts as a "no borrow" indicator for subtraction.
-- **`overflow`** — signed overflow, computed as: for addition, both operands share a sign and the result's sign differs from theirs; for subtraction, operands have different signs and the result's sign differs from the minuend's.
-- **`zero`** — set whenever the result `y` is `0000`.
+### Simulation
 
-## 🧪 Verification
+Simulated with Icarus Verilog on EDA Playground. The testbench first sweeps through all eight opcodes with `enable` low to confirm the output stays at zero, then repeats the sweep with `enable` high. After that, it runs four targeted corner cases -- unsigned carry-out (`1111 + 0001`), positive overflow (`0111 + 0001`), negative overflow (`1000 - 0001`), and the zero flag (`a XOR a`) -- to check the flag logic at the boundaries rather than only for typical inputs.
 
-The design was verified in two stages:
+![Simulation waveform](images/simulation_waveform.png)
 
-1. **Simulation** (Icarus Verilog, via EDA Playground) — the testbench sweeps all 8 opcodes, then exercises targeted corner cases: unsigned carry-out (`1111 + 0001`), positive signed overflow (`0111 + 0001`), negative signed overflow (`1000 − 0001`), and the zero flag (`a XOR a`). All results matched expected values.
+The waveform above confirms the flags assert at exactly the cycles where they're expected to.
 
-   ![Simulation waveform](images/simulation_waveform.png)
+### Synthesis
 
-2. **Synthesis** (Yosys) — the design was synthesized to a gate-level netlist to confirm it is fully synthesizable RTL, not just simulatable behavioral code.
+To confirm this is synthesizable RTL and not just simulatable behavioural code, I ran the design through Yosys and generated the gate-level schematic below.
 
-   ![Yosys synthesis schematic](images/yosys_synthesis_schematic.png)
+![Yosys synthesis schematic](images/yosys_synthesis_schematic.png)
 
-## 🛠️ Running It Yourself
+## Running It
 
-Requires [Icarus Verilog](http://iverilog.icarus.com/):
+Requires [Icarus Verilog](http://iverilog.icarus.com/).
+
+Using the included Makefile:
+
+```bash
+make sim     # compile and run the testbench
+make wave    # open the resulting waveform in GTKWave
+make clean   # remove generated files
+```
+
+Or manually:
 
 ```bash
 iverilog -o alu_sim alu.v alu_tb.v
 vvp alu_sim
 ```
 
-This prints a time-stamped trace of every signal to the console and writes `alu.vcd`, which can be opened in GTKWave (or EPWave on [EDA Playground](https://www.edaplayground.com/)) to inspect the waveform.
+Either way, this prints a time-stamped trace of every signal and writes `alu.vcd`, which can also be opened in EPWave on [EDA Playground](https://www.edaplayground.com/).
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 .
-├── alu.v                              # ALU design
-├── alu_tb.v                           # Testbench
+├── alu.v                  # ALU design
+├── alu_tb.v                # Testbench
+├── Makefile                 # Build/simulation shortcuts
 ├── images/
 │   ├── simulation_waveform.png
 │   └── yosys_synthesis_schematic.png
+├── CHANGELOG.md
 └── README.md
 ```
 
-## 📄 License
+## Tools Used
 
-MIT — see [LICENSE](LICENSE).
+- Verilog (IEEE 1364)
+- Icarus Verilog, via EDA Playground, for simulation
+- Yosys for gate-level synthesis
+- GTKWave / EPWave for waveform inspection
+
+## License
+
+MIT -- see [LICENSE](LICENSE).
