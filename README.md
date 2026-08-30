@@ -1,5 +1,3 @@
-<div align="center">
-
 # 4-bit ALU with Status Flags
 
 A 4-bit Arithmetic Logic Unit implemented in Verilog, supporting eight arithmetic and logic operations along with carry-out, overflow, and zero status flags. The flag logic follows the same conventions used in processor datapaths, and the design has been verified through both simulation and gate-level synthesis.
