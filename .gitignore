@@ -1,0 +1,11 @@
+# OS / editor junk
+.DS_Store
+__MACOSX/
+Thumbs.db
+.vscode/
+.idea/
+
+# Simulation artifacts
+*.vcd
+*.vvp
+alu_sim
